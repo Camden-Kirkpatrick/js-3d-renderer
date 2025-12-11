@@ -1,10 +1,3 @@
-let projected_vertices = [];
-let scale_factor = 800;
-let camera_z = -5;
-let cube_scale = { x: 1, y: 1, z: 1 };
-let cube_rot =   { x: 0, y: 0, z: 0 };
-let cube_trans = { x: 0, y: 0, z: 0 };
-
 let cube_vertices = [
     vec3_t(-1, -1, -1),
     vec3_t( 1, -1, -1),
