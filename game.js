@@ -1,3 +1,4 @@
+export { rand_color };
 import { isDown, wasPressed } from "./keyboard.js";
 
 let triangles_to_render = [];
@@ -10,6 +11,11 @@ let move_speed = 5;   // units per second
 const rot_speed  = 1.5; // radians per second
 let rand_color = 0xFFFFFF;
 let cull = true;
+
+export function setRandomColor(c)
+{
+    rand_color = c;
+}
 
 export function update(dt)
 {

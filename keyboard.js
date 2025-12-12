@@ -1,5 +1,6 @@
 export let keys = {};
 export let key_pressed = {};  // tracks first frame of press
+import { setRandomColor } from "./game.js";
 
 window.addEventListener("keydown", (e) => {
     if (!keys[e.key]) {
@@ -28,4 +29,5 @@ export function wasPressed(key)
 
 window.addEventListener("touchstart", e => {
     console.log("touch!", e.touches[0].clientX, e.touches[0].clientY);
+    setRandomColor(generate_random_color());
 });
