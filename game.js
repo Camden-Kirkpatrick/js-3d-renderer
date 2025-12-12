@@ -8,6 +8,8 @@ let cube_rot =   { x: 0, y: 0, z: 0 };
 let cube_trans = { x: 0, y: 0, z: 0 };
 let move_speed = 5;   // units per second
 const rot_speed  = 1.5; // radians per second
+let rand_color = 0xFFFFFF;
+let cull = true;
 
 export function update(dt)
 {
@@ -41,13 +43,14 @@ export function update(dt)
         cube_rot =   { x: 0, y: 0, z: 0 };
         cube_trans = { x: 0, y: 0, z: 0 };
         move_speed = 5;
+        rand_color = 0xFFFFFF;
     }
 
-    console.log(cube_trans.z);
+    if (wasPressed("g"))
+        rand_color = generate_random_color();
 
-    // cube_rot.x += 1 * dt;
-    // cube_rot.y += 1 * dt;
-    // cube_rot.z += 1 * dt;
+    if (wasPressed("c"))
+        cull = !cull;
 
     // Build world matrix
     let scale_mat = mat4_make_scale(cube_scale.x, cube_scale.y, cube_scale.z);
@@ -103,19 +106,54 @@ export function update(dt)
             tri.points[j] = proj;
         }
 
+        // Convert projected points back into approximate world/camera space
+        // We need this for normals.
+        let v0 = vec3_t(tri.points[0].x, tri.points[0].y, tri.points[0].z);
+        let v1 = vec3_t(tri.points[1].x, tri.points[1].y, tri.points[1].z);
+        let v2 = vec3_t(tri.points[2].x, tri.points[2].y, tri.points[2].z);
+
+        // Compute edges
+        let edge1 = vec3_sub(v1, v0);
+        let edge2 = vec3_sub(v2, v0);
+
+        // Compute face normal
+        let normal = vec3_cross(edge1, edge2);
+
+        // Normalize (optional)
+        vec3_normalize(normal);
+
+        // Camera direction is straight "into the screen": (0,0,1)
+        let camera_dir = vec3_t(0, 0, 1);
+
+        // Dot product tells if triangle is facing camera
+        let dp = vec3_dot(normal, camera_dir);
+
+        // If triangle is facing away → skip it
+        // dp <= 0 = back-facing
+        if (cull)
+        {
+            if (dp <= 0) {
+                continue;
+            }
+        }
+
         // Store this triangle
-        triangles_to_render[i] = tri;
+        triangles_to_render.push(tri);
     }
 }
 
 export function draw()
 {
-    for (let tri of triangles_to_render)
+    for (let i = 0; i < triangles_to_render.length; i++)
     {
+        let tri = triangles_to_render[i];
+
         let p0 = tri.points[0];
         let p1 = tri.points[1];
         let p2 = tri.points[2];
 
-        draw_triangle(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, tri.color);
+        let color = rand_color;
+
+        draw_triangle(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, color);
     }
 }

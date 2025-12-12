@@ -32,6 +32,15 @@ function clear_screen()
     }
 }
 
+function generate_random_color()
+{
+    let r = Math.floor(Math.random() * 256);
+    let g = Math.floor(Math.random() * 256);
+    let b = Math.floor(Math.random() * 256);
+
+    return (r << 16) | (g << 8) | b;
+}
+
 function draw_line(x0, y0, x1, y1, color)
 {
     let delta_x = x1 - x0;
