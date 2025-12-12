@@ -25,3 +25,7 @@ export function wasPressed(key)
     key_pressed[key] = false;
     return pressed;
 }
+
+window.addEventListener("touchstart", e => {
+    console.log("touch!", e.touches[0].clientX, e.touches[0].clientY);
+});
